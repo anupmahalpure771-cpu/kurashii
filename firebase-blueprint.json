@@ -1,0 +1,295 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "Private user account profile and preferences",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string" },
+        "displayName": { "type": "string", "minLength": 2, "maxLength": 40 },
+        "handle": { "type": "string", "pattern": "^[a-z0-9_]{3,20}$" },
+        "primaryUse": { "type": "string", "enum": ["personal", "professional"] },
+        "lastWorkspace": { "type": "string", "enum": ["personal", "professional"] },
+        "timezone": { "type": "string" },
+        "currency": { "type": "string", "enum": ["INR", "USD", "EUR", "GBP", "AED", "SGD"] },
+        "defaultMonthlyBudgetMinor": { "type": "integer" },
+        "theme": { "type": "string", "enum": ["light"] },
+        "avatarColor": { "type": "string" },
+        "onboardingComplete": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["email", "displayName", "handle", "primaryUse", "lastWorkspace", "timezone", "currency", "onboardingComplete"]
+    },
+    "Task": {
+      "title": "Task",
+      "description": "A personal or professional task item",
+      "type": "object",
+      "properties": {
+        "workspace": { "type": "string", "enum": ["personal", "professional"] },
+        "title": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "description": { "type": "string", "maxLength": 2000 },
+        "priority": { "type": "string", "enum": ["low", "medium", "high"] },
+        "category": { "type": "string" },
+        "dueDate": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "completed"] },
+        "completedAt": { "type": "string", "format": "date-time" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["workspace", "title", "priority", "category", "status"]
+    },
+    "CalendarEvent": {
+      "title": "CalendarEvent",
+      "description": "A personal or professional calendar event",
+      "type": "object",
+      "properties": {
+        "workspace": { "type": "string", "enum": ["personal", "professional"] },
+        "title": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "description": { "type": "string", "maxLength": 2000 },
+        "date": { "type": "string" },
+        "startTime": { "type": "string" },
+        "endTime": { "type": "string" },
+        "category": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["workspace", "title", "date", "startTime", "endTime"]
+    },
+    "Meeting": {
+      "title": "Meeting",
+      "description": "Professional workspace scheduled meeting",
+      "type": "object",
+      "properties": {
+        "organizerId": { "type": "string" },
+        "organizerName": { "type": "string" },
+        "title": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "description": { "type": "string", "maxLength": 2000 },
+        "date": { "type": "string" },
+        "startTime": { "type": "string" },
+        "endTime": { "type": "string" },
+        "meetingUrl": { "type": "string", "maxLength": 500 },
+        "status": { "type": "string", "enum": ["scheduled", "cancelled"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["organizerId", "title", "date", "startTime", "endTime", "status"]
+    },
+    "MeetingInvitation": {
+      "title": "MeetingInvitation",
+      "description": "Invitation record for meeting participants",
+      "type": "object",
+      "properties": {
+        "meetingId": { "type": "string" },
+        "organizerId": { "type": "string" },
+        "organizerName": { "type": "string" },
+        "inviteeUid": { "type": "string" },
+        "inviteeName": { "type": "string" },
+        "title": { "type": "string" },
+        "date": { "type": "string" },
+        "startTime": { "type": "string" },
+        "endTime": { "type": "string" },
+        "meetingUrl": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "accepted", "declined"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["meetingId", "organizerId", "inviteeUid", "status"]
+    },
+    "Expense": {
+      "title": "Expense",
+      "description": "Income or expense financial transaction record",
+      "type": "object",
+      "properties": {
+        "type": { "type": "string", "enum": ["income", "expense"] },
+        "amountMinor": { "type": "integer" },
+        "category": { "type": "string", "minLength": 1, "maxLength": 50 },
+        "date": { "type": "string" },
+        "description": { "type": "string", "maxLength": 300 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["type", "amountMinor", "category", "date"]
+    },
+    "Budget": {
+      "title": "Budget",
+      "description": "Monthly spending budget target",
+      "type": "object",
+      "properties": {
+        "month": { "type": "string" },
+        "budgetMinor": { "type": "integer" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["month", "budgetMinor"]
+    },
+    "Note": {
+      "title": "Note",
+      "description": "Personal or work note/meeting minutes",
+      "type": "object",
+      "properties": {
+        "workspace": { "type": "string", "enum": ["personal", "professional"] },
+        "title": { "type": "string", "minLength": 1, "maxLength": 150 },
+        "content": { "type": "string", "maxLength": 10000 },
+        "category": { "type": "string" },
+        "meetingId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["workspace", "title", "content"]
+    },
+    "Goal": {
+      "title": "Goal",
+      "description": "Personal or professional measurable goal",
+      "type": "object",
+      "properties": {
+        "workspace": { "type": "string", "enum": ["personal", "professional"] },
+        "title": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "description": { "type": "string", "maxLength": 1000 },
+        "targetDate": { "type": "string" },
+        "currentProgress": { "type": "integer" },
+        "targetProgress": { "type": "integer" },
+        "unit": { "type": "string", "maxLength": 30 },
+        "category": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["workspace", "title", "targetDate", "currentProgress", "targetProgress"]
+    },
+    "Habit": {
+      "title": "Habit",
+      "description": "Personal recurring habit with daily tracking",
+      "type": "object",
+      "properties": {
+        "workspace": { "type": "string", "enum": ["personal", "professional"] },
+        "name": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "frequency": { "type": "string", "enum": ["daily", "weekdays", "weekly"] },
+        "category": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["workspace", "name", "frequency"]
+    },
+    "Notification": {
+      "title": "Notification",
+      "description": "In-app persisted notification item",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "maxLength": 120 },
+        "message": { "type": "string", "maxLength": 500 },
+        "type": { "type": "string", "enum": ["invitation", "meeting", "system", "chat"] },
+        "read": { "type": "boolean" },
+        "link": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "message", "type", "read"]
+    },
+    "Conversation": {
+      "title": "Conversation",
+      "description": "One-to-one professional conversation channel",
+      "type": "object",
+      "properties": {
+        "lastMessage": { "type": "string", "maxLength": 1000 },
+        "lastMessageAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["lastMessage", "lastMessageAt"]
+    },
+    "Message": {
+      "title": "Message",
+      "description": "One-to-one direct message",
+      "type": "object",
+      "properties": {
+        "conversationId": { "type": "string" },
+        "senderUid": { "type": "string" },
+        "senderName": { "type": "string" },
+        "content": { "type": "string", "minLength": 1, "maxLength": 2000 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["conversationId", "senderUid", "content"]
+    },
+    "PublicProfile": {
+      "title": "PublicProfile",
+      "description": "Public directory profile for handle lookup and avatar display",
+      "type": "object",
+      "properties": {
+        "displayName": { "type": "string", "minLength": 2, "maxLength": 40 },
+        "handle": { "type": "string", "pattern": "^[a-z0-9_]{3,20}$" },
+        "avatarColor": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["displayName", "handle", "avatarColor"]
+    },
+    "Handle": {
+      "title": "Handle",
+      "description": "Registry to enforce unique handles across the platform",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" }
+      },
+      "required": ["uid"]
+    }
+  },
+  "firestore": {
+    "/users/{uid}": {
+      "schema": "User",
+      "description": "Private owner profile and configuration"
+    },
+    "/users/{uid}/tasks/{taskId}": {
+      "schema": "Task",
+      "description": "Personal and professional workspace tasks for the user"
+    },
+    "/users/{uid}/events/{eventId}": {
+      "schema": "CalendarEvent",
+      "description": "Personal and professional calendar events"
+    },
+    "/users/{uid}/expenses/{expenseId}": {
+      "schema": "Expense",
+      "description": "Personal financial transactions"
+    },
+    "/users/{uid}/budgets/{month}": {
+      "schema": "Budget",
+      "description": "Monthly spending budgets"
+    },
+    "/users/{uid}/notes/{noteId}": {
+      "schema": "Note",
+      "description": "Personal notes and work meeting minutes"
+    },
+    "/users/{uid}/goals/{goalId}": {
+      "schema": "Goal",
+      "description": "Personal and professional measurable goals"
+    },
+    "/users/{uid}/habits/{habitId}": {
+      "schema": "Habit",
+      "description": "Habit definitions with completions subcollection"
+    },
+    "/users/{uid}/notifications/{notifId}": {
+      "schema": "Notification",
+      "description": "In-app notifications"
+    },
+    "/meetings/{meetingId}": {
+      "schema": "Meeting",
+      "description": "Professional workspace scheduled meetings"
+    },
+    "/meetingInvitations/{invitationId}": {
+      "schema": "MeetingInvitation",
+      "description": "Meeting participant invitations"
+    },
+    "/conversations/{convId}": {
+      "schema": "Conversation",
+      "description": "One-to-one professional conversations"
+    },
+    "/conversations/{convId}/messages/{msgId}": {
+      "schema": "Message",
+      "description": "Direct messages in conversation"
+    },
+    "/publicProfiles/{uid}": {
+      "schema": "PublicProfile",
+      "description": "Publicly readable profile card with handle and display name"
+    },
+    "/handles/{handle}": {
+      "schema": "Handle",
+      "description": "Unique handle lookup pointing to uid"
+    }
+  }
+}

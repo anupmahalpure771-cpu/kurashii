@@ -1,0 +1,17 @@
+{
+  "name": "Kurashii — Your life. In sync.",
+  "short_name": "Kurashii",
+  "description": "One place for your personal life and professional world. Plan better, work smarter, and keep everything in balance.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#F1F5F9",
+  "theme_color": "#111827",
+  "icons": [
+    {
+      "src": "kurashii-emblem.jpg",
+      "sizes": "1024x1024",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "name": "Kurashii",
+  "description": "One place for your personal life and professional world. Plan better, work smarter, and keep everything in balance.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+

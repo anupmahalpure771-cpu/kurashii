@@ -1,0 +1,86 @@
+name: Build APK & deploy web
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write   # publish the APK as a GitHub Release
+  pages: write      # deploy to GitHub Pages
+  id-token: write
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  web:
+    name: Web app -> GitHub Pages
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm install --legacy-peer-deps --no-audit --no-fund
+      - name: Build for /<repo>/
+        run: npx vite build
+        env:
+          VITE_BASE: /${{ github.event.repository.name }}/
+          VITE_API_BASE: ${{ vars.VITE_API_BASE }}
+      - name: SPA fallback for deep links
+        run: cp dist/index.html dist/404.html
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+      - id: deploy
+        uses: actions/deploy-pages@v4
+
+  android:
+    name: Android APK
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: android-actions/setup-android@v3
+      - run: npm install --legacy-peer-deps --no-audit --no-fund
+      - name: Build web bundle for the app
+        run: npx vite build
+        env:
+          VITE_BASE: /
+          VITE_API_BASE: ${{ vars.VITE_API_BASE }}
+      - name: Copy bundle into the Android project
+        run: npx cap sync android
+      - name: Build APK
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+      - name: Rename APK
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk Kurashii.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Kurashii-apk
+          path: Kurashii.apk
+      - name: Publish as a release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: build-${{ github.run_number }}
+          name: Kurashii build ${{ github.run_number }}
+          body: |
+            Android APK built from ${{ github.sha }}.
+            Install: download Kurashii.apk on your phone and allow "Install unknown apps" when asked.
+          files: Kurashii.apk
